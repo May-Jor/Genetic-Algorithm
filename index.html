@@ -1,0 +1,86 @@
+<DOCTYPE html>
+<html>
+	<style>
+			
+		body{
+			margin: 0;
+			padding: 0;
+			text-align: center;
+		}
+		h1{
+			margin: 0 auto;
+		}
+		p{
+
+		}
+		div{
+			width: 20px;
+			margin: 0 auto;
+		}
+	</style>
+	<body>
+		input text here: <input type="text" id="testText" value="to be or not to be">
+			<button onclick="startEvolve();">Start Evolutionary Process</button>
+		<h1 id="generation-counter">Generation: 0</h1>
+		<h1 id="best-gene">Best Genome: </h1>
+
+		<div id="pop-container">
+			<p id="top-genes"></p>
+		</div>
+		<canvas id="genePool" height="750px" width="1000px" style="border: 1px solid black"></canvas>
+	</body>
+
+	<script src="population.js" type="text/javascript"></script>
+	<script src="fitness.js" type="text/javascript"></script>
+	<script>
+		//page constants
+		var generation = 0;
+		var bestGene;
+		var genePoolForceStop = false;
+		let ctx = document.getElementById("genePool").getContext('2d');
+		//update all page info
+		function updatepage(){
+			document.getElementById("generation-counter").innerHTML = "Generation: " + generation;
+			document.getElementById("best-gene").innerHTML = "Best Gene: " + bestGene;
+			ctx.font = "30px Arial";
+			ctx.fillText(bestGene ,Math.floor(Math.random() * 900), Math.floor(Math.random() * 720));
+		}
+		//go through a generation of creatures
+		function newGeneration(){
+				testFitness();
+				population.naturalSelection();
+				population.breed();
+				testFitness();
+				//console.log(population);
+		}
+		var testText;
+		//through an evolutionary process, get the perfect genome that matches the input text
+		function startEvolve(){
+			//grab the text that we are trying to match
+			var text = document.getElementById("testText").value;
+			//alert(text);
+			testText = text.split("");
+			//initialize the starting population
+			createPOP(testText.length * 1000, testText.length);
+			//console.log(population);
+			///						///
+			///						///
+			///		START EVOLVING  ///
+			///						///
+			///						///
+			var evolve = setInterval(function(){
+				if(population.maxFit >= testText.length){
+					ctx.fillStyle = "green";
+					updatepage();
+					clearInterval(evolve);
+				}
+				else{
+					newGeneration();
+					updatepage();
+					generation++;
+				}
+			}, 1);
+			//alert("The creature has evolved to meet the requirements");
+		}
+	</script>
+</html>
